@@ -31,9 +31,6 @@ namespace SampleTypeManager
     public partial class FormMain : Form
     {
         Font Arial_10_Bold = new Font("Arial", 10.0f, FontStyle.Bold);
-
-        string NumSep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-        string NL = Environment.NewLine;        
         XmlDocument doc = new XmlDocument();
         string filename;
         bool modified = false;
@@ -90,32 +87,32 @@ namespace SampleTypeManager
             }
         }
 
-        private void AddSampleTypes(XmlNode node, TreeNode tnode)
+        private void AddSampleTypes(XmlNode xnode, TreeNode tnode)
         {
-            foreach (XmlNode n in node.ChildNodes)
+            foreach (XmlNode xn in xnode.ChildNodes)
             {
-                if (n.NodeType == XmlNodeType.Element && n.Name.ToLower() == "sampletype")
+                if (xn.NodeType == XmlNodeType.Element && xn.Name.ToLower() == "sampletype")
                 {
-                    TreeNode newNode = new TreeNode(n.Attributes["name"].InnerText);
-                    newNode.ToolTipText = tnode.ToolTipText + "/" + n.Attributes["name"].InnerText;
-                    newNode.Tag = n;
-                    tnode.Nodes.Add(newNode);
-                    AddSampleTypes(n, newNode);
+                    TreeNode tn = new TreeNode(xn.Attributes["name"].InnerText);
+                    tn.ToolTipText = tnode.ToolTipText + "/" + xn.Attributes["name"].InnerText;
+                    tn.Tag = xn;
+                    tnode.Nodes.Add(tn);
+                    AddSampleTypes(xn, tn);
                 }
             }
         }
 
-        private string GetNodePath(XmlNode node)
+        private string GetNodePath(XmlNode xnode)
         {
-            if (node == doc.DocumentElement)
+            if (xnode == doc.DocumentElement)
                 return "/sampletypes/";
 
-            string path = "sampletype[@name = \"" + node.Attributes["name"].InnerText + "\"]/";
+            string path = "sampletype[@name = \"" + xnode.Attributes["name"].InnerText + "\"]/";
             XmlNode search = null;
-            while ((search = node.ParentNode).Name.ToLower() != "sampletypes")
+            while ((search = xnode.ParentNode).Name.ToLower() != "sampletypes")
             {
                 path = "sampletype[@name = \"" + search.Attributes["name"].InnerText + "\"]/" + path;
-                node = search;
+                xnode = search;
             }
             return "/sampletypes/" + path.Substring(0, path.Length - 1);
         }
@@ -135,6 +132,8 @@ namespace SampleTypeManager
                 btnComponentAdd.Enabled = true;
                 menuItemComponentRemove.Enabled = false;
                 btnComponentRemove.Enabled = false;
+
+                tree.Focus();
             }
             catch(Exception ex)
             {
@@ -142,30 +141,30 @@ namespace SampleTypeManager
             }
         }
 
-        private void PopulateComponents(TreeNode node)
+        private void PopulateComponents(TreeNode tnode)
         {
             lbComponents.Items.Clear();
             lbComponents2.Items.Clear();
 
-            if (node.Level == 0)
+            if (tnode.Level == 0)
                 return;
 
-            XmlNode xnode = node.Tag as XmlNode;
+            XmlNode xnode = tnode.Tag as XmlNode;
             string path = GetNodePath(xnode) + "/component";
-            XmlNodeList nodes = doc.SelectNodes(path);
+            XmlNodeList xnodes = doc.SelectNodes(path);
 
-            foreach (XmlNode n in nodes)
-                lbComponents.Items.Add(n.Attributes["name"].InnerText);
+            foreach (XmlNode xn in xnodes)
+                lbComponents.Items.Add(xn.Attributes["name"].InnerText);
 
             while(xnode.ParentNode != doc.DocumentElement)
             {
                 xnode = xnode.ParentNode;
 
                 path = GetNodePath(xnode) + "/component";
-                nodes = doc.SelectNodes(path);
+                xnodes = doc.SelectNodes(path);
 
-                foreach (XmlNode n in nodes)
-                    lbComponents2.Items.Add(n.Attributes["name"].InnerText);
+                foreach (XmlNode xn in xnodes)
+                    lbComponents2.Items.Add(xn.Attributes["name"].InnerText);
             }
         }
 
@@ -184,6 +183,11 @@ namespace SampleTypeManager
                     return;
                 }
 
+                if (MessageBox.Show("File has been modified. Do you want to save changes?", "Question", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    menuItemSave_Click(sender, e);
+                }
+
                 tree.Nodes.Clear();
 
                 doc.LoadXml("<sampletypes></sampletypes>");
@@ -194,7 +198,7 @@ namespace SampleTypeManager
 
                 XmlElement root = doc.DocumentElement;
                 TreeNode tnode = tree.Nodes.Add("Sample types");
-                tnode.NodeFont = new Font("Arial", 10.0f, FontStyle.Bold);
+                tnode.NodeFont = Arial_10_Bold;
                 tnode.Tag = root;
                 AddSampleTypes(root, tnode);
 
@@ -226,11 +230,11 @@ namespace SampleTypeManager
                     return;
                 }
 
-                TreeNode tn = tree.SelectedNode;
-
-                foreach (TreeNode node in tn.Nodes)
+                TreeNode tnode = tree.SelectedNode;
+                
+                foreach (TreeNode tn in tnode.Nodes)
                 {
-                    string name = node.Text;
+                    string name = tn.Text;
                     if (name.ToLower() == form.SelectedNorwegianName.ToLower())
                     {
                         MessageBox.Show("Name " + name + " already exist at this location");
@@ -238,15 +242,15 @@ namespace SampleTypeManager
                     }
                 }
 
-                XmlNode xn = tree.SelectedNode.Tag as XmlNode;
-                XmlElement newXn = doc.CreateElement(String.Empty, "sampletype", "");
-                newXn.SetAttribute("name", form.SelectedNorwegianName);
-                newXn.SetAttribute("name_english", "");
-                newXn.SetAttribute("name_latin", "");
-                xn.AppendChild(newXn);
-                TreeNode newTn = tn.Nodes.Add(form.SelectedNorwegianName);
-                newTn.ToolTipText = tn.ToolTipText + "/" + form.SelectedNorwegianName;
-                newTn.Tag = newXn;
+                XmlNode xnode = tree.SelectedNode.Tag as XmlNode;
+                XmlElement xe = doc.CreateElement(String.Empty, "sampletype", "");
+                xe.SetAttribute("name", form.SelectedNorwegianName);
+                xe.SetAttribute("name_english", "");
+                xe.SetAttribute("name_latin", "");
+                xnode.AppendChild(xe);
+                TreeNode tn2 = tnode.Nodes.Add(form.SelectedNorwegianName);
+                tn2.ToolTipText = tnode.ToolTipText + "/" + form.SelectedNorwegianName;
+                tn2.Tag = xe;
                 modified = true;
 
                 lblStatus.Text = "Sample type " + form.SelectedNorwegianName + " added";
@@ -270,12 +274,12 @@ namespace SampleTypeManager
                 if (MessageBox.Show("Are you sure you want to remove " + tree.SelectedNode.Text + " and all its children?", "", MessageBoxButtons.YesNo) != DialogResult.Yes)
                     return;
 
-                XmlNode remNode = tree.SelectedNode.Tag as XmlNode;
+                XmlNode remXnode = tree.SelectedNode.Tag as XmlNode;
 
                 RemoveNodes(tree.SelectedNode);
 
-                remNode.RemoveAll();
-                remNode.ParentNode.RemoveChild(remNode);
+                remXnode.RemoveAll();
+                remXnode.ParentNode.RemoveChild(remXnode);
                 modified = true;
 
                 lblStatus.Text = "Sample type " + tree.SelectedNode + " removed";
@@ -286,11 +290,11 @@ namespace SampleTypeManager
             }
         }
 
-        void RemoveNodes(TreeNode node)
+        void RemoveNodes(TreeNode tnode)
         {
-            foreach(TreeNode n in node.Nodes)            
-                RemoveNodes(n);            
-            node.Remove();          
+            foreach(TreeNode tn in tnode.Nodes)            
+                RemoveNodes(tn);            
+            tnode.Remove();          
         }
 
         private void menuItemComponentAdd_Click(object sender, EventArgs e)
@@ -313,12 +317,12 @@ namespace SampleTypeManager
                     return;
                 }
 
-                XmlNode xn = tree.SelectedNode.Tag as XmlNode;
-                XmlElement newXn = doc.CreateElement(String.Empty, "component", "");
-                newXn.SetAttribute("name", form.SelectedNorwegianName);
-                newXn.SetAttribute("name_english", "");
-                newXn.SetAttribute("name_latin", "");
-                xn.AppendChild(newXn);
+                XmlNode xnode = tree.SelectedNode.Tag as XmlNode;
+                XmlElement xe = doc.CreateElement(String.Empty, "component", "");
+                xe.SetAttribute("name", form.SelectedNorwegianName);
+                xe.SetAttribute("name_english", "");
+                xe.SetAttribute("name_latin", "");
+                xnode.AppendChild(xe);
                 modified = true;
 
                 PopulateComponents(tree.SelectedNode);
@@ -352,25 +356,24 @@ namespace SampleTypeManager
                 if (MessageBox.Show("Are you sure you want to remove component " + comp + "?", "", MessageBoxButtons.YesNo) != DialogResult.Yes)
                     return;
 
-                XmlNode remNode = tree.SelectedNode.Tag as XmlNode;
+                XmlNode remXnode = tree.SelectedNode.Tag as XmlNode;
                 XmlNode remComp = null;
 
-                foreach (XmlNode n in remNode.ChildNodes)
+                foreach (XmlNode xn in remXnode.ChildNodes)
                 {
-                    if (n.Attributes["name"].InnerText.ToLower() == comp.ToLower())
+                    if (xn.Attributes["name"].InnerText.ToLower() == comp.ToLower())
                     {
-                        remComp = n;
+                        remComp = xn;
                         break;
                     }
                 }
 
                 if (remComp != null)
                 {
-                    remNode.RemoveChild(remComp);
+                    remXnode.RemoveChild(remComp);
                     lbComponents.Items.Remove(comp);
-                }
-
-                modified = true;
+                    modified = true;
+                }                
 
                 lblStatus.Text = "Component " + comp + " removed";
             }
@@ -415,6 +418,46 @@ namespace SampleTypeManager
                 btnComponentAdd.Enabled = true;
                 btnComponentRemove.Enabled = true;
             }
+
+            tree.Focus();
+        }
+
+        private void tbSearch_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(String.IsNullOrEmpty(filename))
+            {
+                lblStatus.Text = "No document loaded";
+                e.Handled = true;
+                return;
+            }
+
+            if (e.KeyChar == Convert.ToChar(Keys.Enter))
+            {
+                tbSearch.Text = tbSearch.Text.Trim();
+                if (String.IsNullOrEmpty(tbSearch.Text))
+                    return;
+
+                if (SelectFirstTreeNode(tree.Nodes[0], tbSearch.Text))
+                    lblStatus.Text = "Sample type " + tbSearch.Text + " found";
+                else lblStatus.Text = "Sample type " + tbSearch.Text + " not found";
+
+                e.Handled = true;
+            }
+        }
+
+        private bool SelectFirstTreeNode(TreeNode tnode, string find)
+        {
+            if(tnode.Text.ToLower() == find.ToLower())
+            {
+                tree.SelectedNode = tnode;
+                return true;
+            }
+
+            foreach (TreeNode tn in tnode.Nodes)
+                if (SelectFirstTreeNode(tn, find))
+                    return true;
+
+            return false;
         }
     }
 }

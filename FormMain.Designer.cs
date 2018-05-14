@@ -44,6 +44,7 @@
             this.menuItemComponentRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.tbSearch = new System.Windows.Forms.ToolStripTextBox();
             this.status = new System.Windows.Forms.StatusStrip();
             this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tree = new System.Windows.Forms.TreeView();
@@ -80,12 +81,13 @@
             this.menu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemFile,
             this.menuItemType,
+            this.tbSearch,
             this.menuItemComponent,
             this.helpToolStripMenuItem});
             this.menu.Location = new System.Drawing.Point(0, 0);
             this.menu.Name = "menu";
             this.menu.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            this.menu.Size = new System.Drawing.Size(790, 24);
+            this.menu.Size = new System.Drawing.Size(790, 27);
             this.menu.TabIndex = 0;
             this.menu.Text = "menuStrip1";
             // 
@@ -98,14 +100,14 @@
             this.toolStripSeparator1,
             this.menuItemExit});
             this.menuItemFile.Name = "menuItemFile";
-            this.menuItemFile.Size = new System.Drawing.Size(37, 20);
+            this.menuItemFile.Size = new System.Drawing.Size(37, 23);
             this.menuItemFile.Text = "&File";
             // 
             // menuItemNew
             // 
             this.menuItemNew.Image = global::SampleTypeManager.Properties.Resources.new_library;
             this.menuItemNew.Name = "menuItemNew";
-            this.menuItemNew.Size = new System.Drawing.Size(152, 22);
+            this.menuItemNew.Size = new System.Drawing.Size(107, 22);
             this.menuItemNew.Text = "&New...";
             this.menuItemNew.Click += new System.EventHandler(this.menuItemNew_Click);
             // 
@@ -113,7 +115,7 @@
             // 
             this.menuItemOpen.Image = global::SampleTypeManager.Properties.Resources.open_library;
             this.menuItemOpen.Name = "menuItemOpen";
-            this.menuItemOpen.Size = new System.Drawing.Size(152, 22);
+            this.menuItemOpen.Size = new System.Drawing.Size(107, 22);
             this.menuItemOpen.Text = "&Open";
             this.menuItemOpen.Click += new System.EventHandler(this.menuItemOpen_Click);
             // 
@@ -122,20 +124,20 @@
             this.menuItemSave.Enabled = false;
             this.menuItemSave.Image = global::SampleTypeManager.Properties.Resources.save;
             this.menuItemSave.Name = "menuItemSave";
-            this.menuItemSave.Size = new System.Drawing.Size(152, 22);
+            this.menuItemSave.Size = new System.Drawing.Size(107, 22);
             this.menuItemSave.Text = "&Save";
             this.menuItemSave.Click += new System.EventHandler(this.menuItemSave_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(104, 6);
             // 
             // menuItemExit
             // 
             this.menuItemExit.Image = global::SampleTypeManager.Properties.Resources.exit;
             this.menuItemExit.Name = "menuItemExit";
-            this.menuItemExit.Size = new System.Drawing.Size(152, 22);
+            this.menuItemExit.Size = new System.Drawing.Size(107, 22);
             this.menuItemExit.Text = "E&xit";
             this.menuItemExit.Click += new System.EventHandler(this.menuItemExit_Click);
             // 
@@ -145,7 +147,7 @@
             this.menuItemTypeAdd,
             this.menuItemTypeRemove});
             this.menuItemType.Name = "menuItemType";
-            this.menuItemType.Size = new System.Drawing.Size(89, 20);
+            this.menuItemType.Size = new System.Drawing.Size(89, 23);
             this.menuItemType.Text = "&Sample types";
             // 
             // menuItemTypeAdd
@@ -172,7 +174,7 @@
             this.menuItemComponentAdd,
             this.menuItemComponentRemove});
             this.menuItemComponent.Name = "menuItemComponent";
-            this.menuItemComponent.Size = new System.Drawing.Size(128, 20);
+            this.menuItemComponent.Size = new System.Drawing.Size(128, 23);
             this.menuItemComponent.Text = "Sample &components";
             // 
             // menuItemComponentAdd
@@ -198,7 +200,7 @@
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuItemAbout});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
             this.helpToolStripMenuItem.Text = "&Help";
             // 
             // menuItemAbout
@@ -207,6 +209,12 @@
             this.menuItemAbout.Size = new System.Drawing.Size(107, 22);
             this.menuItemAbout.Text = "A&bout";
             this.menuItemAbout.Click += new System.EventHandler(this.menuItemAbout_Click);
+            // 
+            // tbSearch
+            // 
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(100, 23);
+            this.tbSearch.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbSearch_KeyPress);
             // 
             // status
             // 
@@ -231,11 +239,12 @@
             this.tree.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tree.Font = new System.Drawing.Font("Arial", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tree.HideSelection = false;
             this.tree.Indent = 32;
             this.tree.Location = new System.Drawing.Point(0, 25);
             this.tree.Name = "tree";
             this.tree.ShowNodeToolTips = true;
-            this.tree.Size = new System.Drawing.Size(546, 600);
+            this.tree.Size = new System.Drawing.Size(546, 597);
             this.tree.TabIndex = 3;
             this.tree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tree_AfterSelect);
             // 
@@ -253,14 +262,14 @@
             this.lbComponents.ItemHeight = 16;
             this.lbComponents.Location = new System.Drawing.Point(0, 16);
             this.lbComponents.Name = "lbComponents";
-            this.lbComponents.Size = new System.Drawing.Size(240, 271);
+            this.lbComponents.Size = new System.Drawing.Size(240, 269);
             this.lbComponents.TabIndex = 0;
             this.lbComponents.SelectedIndexChanged += new System.EventHandler(this.lbComponents_SelectedIndexChanged);
             // 
             // split
             // 
             this.split.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.split.Location = new System.Drawing.Point(0, 24);
+            this.split.Location = new System.Drawing.Point(0, 27);
             this.split.Name = "split";
             // 
             // split.Panel1
@@ -274,7 +283,7 @@
             this.split.Panel2.Controls.Add(this.split2);
             this.split.Panel2.Controls.Add(this.tools2);
             this.split.Panel2MinSize = 200;
-            this.split.Size = new System.Drawing.Size(790, 625);
+            this.split.Size = new System.Drawing.Size(790, 622);
             this.split.SplitterDistance = 546;
             this.split.TabIndex = 5;
             // 
@@ -330,8 +339,8 @@
             // 
             this.split2.Panel2.Controls.Add(this.lbComponents2);
             this.split2.Panel2.Controls.Add(this.label2);
-            this.split2.Size = new System.Drawing.Size(240, 600);
-            this.split2.SplitterDistance = 287;
+            this.split2.Size = new System.Drawing.Size(240, 597);
+            this.split2.SplitterDistance = 285;
             this.split2.TabIndex = 3;
             // 
             // label1
@@ -356,7 +365,7 @@
             this.lbComponents2.Location = new System.Drawing.Point(0, 16);
             this.lbComponents2.Name = "lbComponents2";
             this.lbComponents2.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.lbComponents2.Size = new System.Drawing.Size(240, 293);
+            this.lbComponents2.Size = new System.Drawing.Size(240, 292);
             this.lbComponents2.TabIndex = 1;
             // 
             // label2
@@ -490,6 +499,7 @@
         private System.Windows.Forms.SplitContainer split2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ListBox lbComponents2;
+        private System.Windows.Forms.ToolStripTextBox tbSearch;
     }
 }
 
